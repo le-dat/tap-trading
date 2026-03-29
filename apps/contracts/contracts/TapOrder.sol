@@ -4,8 +4,8 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "./PriceFeedAdapter.sol";
-import "./PayoutPool.sol";
+import "./interfaces/IPriceFeedAdapter.sol";
+import "./interfaces/IPayoutPool.sol";
 
 /**
  * @title TapOrder
@@ -38,8 +38,8 @@ contract TapOrder is Ownable(msg.sender), Pausable, ReentrancyGuard {
     // State
     // -----------------------------------------------------------------------
 
-    PriceFeedAdapter public priceFeedAdapter;
-    PayoutPool       public payoutPool;
+    IPriceFeedAdapter public priceFeedAdapter;
+    IPayoutPool       public payoutPool;
 
     /// @notice Incrementing order counter.
     uint256 public nextOrderId = 1;
@@ -100,8 +100,8 @@ contract TapOrder is Ownable(msg.sender), Pausable, ReentrancyGuard {
     // -----------------------------------------------------------------------
 
     constructor(address _priceFeedAdapter, address _payoutPool) {
-        priceFeedAdapter = PriceFeedAdapter(_priceFeedAdapter);
-        payoutPool = PayoutPool(_payoutPool);
+        priceFeedAdapter = IPriceFeedAdapter(_priceFeedAdapter);
+        payoutPool = IPayoutPool(_payoutPool);
 
         // Seed allowed multipliers for MVP (200=2x, 500=5x, 1000=10x)
         allowedMultipliers[200]  = true;
