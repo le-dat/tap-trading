@@ -464,6 +464,9 @@ describe("TapOrder — isAbove logic", function () {
     const { user, other, tapOrder, btcFeed } = await loadFixture(deployContracts);
     const target = parseUnits("66000", 8);
     const orderId = await createOrder(tapOrder, user, btcFeed, target, true);
+    // Warp past expiry so LOST can happen
+    await hre.ethers.provider.send("evm_increaseTime", [61]);
+    await hre.ethers.provider.send("evm_mine", []);
     // Price falls to 64000
     await btcFeed.updateAnswer(parseUnits("64000", 8));
     await tapOrder.connect(other).settleOrder(orderId);
@@ -474,6 +477,9 @@ describe("TapOrder — isAbove logic", function () {
     const { user, other, tapOrder, btcFeed } = await loadFixture(deployContracts);
     const target = parseUnits("64000", 8);
     const orderId = await createOrder(tapOrder, user, btcFeed, target, false);
+    // Warp past expiry so LOST can happen
+    await hre.ethers.provider.send("evm_increaseTime", [61]);
+    await hre.ethers.provider.send("evm_mine", []);
     // Price rises to 66000
     await btcFeed.updateAnswer(parseUnits("66000", 8));
     await tapOrder.connect(other).settleOrder(orderId);

@@ -199,11 +199,13 @@ contract TapOrder is Ownable(msg.sender), Pausable, ReentrancyGuard {
      *         Individual failures do NOT revert the entire batch.
      * @param orderIds Array of order IDs to settle
      */
-    function batchSettle(uint256[] calldata orderIds) external nonReentrant {
+    function batchSettle(uint256[] calldata orderIds) external {
         uint256 len = orderIds.length;
         for (uint256 i = 0; i < len; ) {
+            // call settleOrder externally so try/catch works — settleOrder's own
+            // nonReentrant guard + OrderNotOpen check protects against re-entrancy
             try this.settleOrder(orderIds[i]) {
-                // success — nothing to do
+                // success
             } catch {
                 // swallow per-order failures so batch continues
             }
@@ -267,7 +269,7 @@ contract TapOrder is Ownable(msg.sender), Pausable, ReentrancyGuard {
             revert StalePriceFeed(order.assetKey);
         }
 
-        // Check touch or expiry
+        // Check touch — price touching always settles (WIN takes priority over expiry)
         bool touched = _checkTouch(order, currentPrice);
 
         if (touched) {
@@ -275,10 +277,12 @@ contract TapOrder is Ownable(msg.sender), Pausable, ReentrancyGuard {
             uint256 payout = (order.stake * order.multiplierBps) / 10000;
             payoutPool.payout(assetFeeds[order.assetKey], order.user, payout);
             emit OrderWon(orderId, order.user, payout);
-        } else {
+        } else if (block.timestamp >= order.expiry) {
+            // Not touched AND expiry reached → LOST
             order.status = OrderStatus.LOST;
             emit OrderLost(orderId, order.user);
         }
+        // else: neither touched nor expired — order stays OPEN
     }
 
     /**

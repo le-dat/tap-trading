@@ -6,7 +6,10 @@
     "compile": "hardhat compile",
     "typechain:gen": "hardhat typechain",
     "test": "hardhat test",
-    "node": "hardhat node"
+    "node": "hardhat node",
+    "foundry:test": "forge test",
+    "foundry:build": "forge build",
+    "foundry:fmt": "forge fmt"
   },
   "devDependencies": {
     "@chainlink/contracts": "^1.5.0",
