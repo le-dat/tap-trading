@@ -1,4 +1,6 @@
-# Tap Trading — Changelog
+# Changelog — Tap Trading
+
+> [ [CLAUDE.md](../CLAUDE.md) ] [ [Spec](spec-doc.md) ] [ [Architecture](architecture.md) ] [ [Plan](project-plan.md) ] [ [Status](project-status.md) ] [ [Changelog](changelog.md) ]
 
 > Updated automatically by `/update-docs` command after each completed feature.
 > Format: [version or date] — what changed — who / which session.
@@ -9,7 +11,7 @@
 
 After completing a feature, run:
 ```
-/update-docs
+/checkpoint
 ```
 Claude will add an entry to this file with: what was built, key decisions made, any bugs encountered and fixed.
 
@@ -20,27 +22,44 @@ Claude will add an entry to this file with: what was built, key decisions made, 
 ### Added
 - Project scaffolded from claude-starter template
 - CLAUDE.md populated with full Tap Trading domain context
-- 5 domain-specific commands added to .claude/commands/
 - docs/ folder initialized with spec-doc, architecture, changelog, project-status
+- project-plan.md generated (22 steps, 6 phases, ~8 weeks to Milestone 1)
+- `PayoutPool.sol`: added `ReentrancyGuard` + `nonReentrant` on `withdraw()`
+- `PriceFeedAdapter.sol`: added `Ownable` + `onlyOwner` on `setFeed()`
+- `TapOrder.sol`: added `MIN_STAKE` (0.001 ETH) / `MAX_STAKE` (0.1 ETH) stake guards
+- `TapOrder.sol`: `pause()`/`unpause()` now coordinate with `PayoutPool.pause()`/`unpause()`
+- `scripts/deploy.ts`: grants `DEFAULT_ADMIN_ROLE` to TapOrder for PayoutPool pause coordination
+
+### Fixed
+- `@nomicfoundation/hardhat-toolbox` missing dep → replaced with `@nomicfoundation/hardhat-ethers` to avoid Hardhat 3 migration chain
+- Stale feed test arithmetic underflow (timestamp warp needed before updating mock)
+- Missing `batchSettle` external call via `try this.settleOrder()` for partial failure isolation
+- `deploy.ts`: missing `DEFAULT_ADMIN_ROLE` grant to TapOrder (needed for PayoutPool pause coordination)
 
 ---
 
 ## [0.1.0] — Contracts (target: Week 2)
 
-_To be filled after Phase 1 completion._
+_Phase 1 complete — 2026-03-31_
 
 ### Added
-- TapOrder.sol: createOrder, settleOrder, batchSettle, pause/unpause
-- PriceFeedAdapter.sol: Chainlink AggregatorV3 wrapper with stale check
-- PayoutPool.sol: liquidity management, operator fee
-- MockV3Aggregator.sol: for local testing
-- Full test suite: settlement edge cases, reentrancy, stale price
-- Deploy scripts: base-sepolia, base mainnet
-- TypeChain bindings generated
+- TapOrder.sol: createOrder, settleOrder, batchSettle, pause/unpause, nonReentrant guards
+- PriceFeedAdapter.sol: Chainlink AggregatorV3 wrapper with 60s stale threshold
+- PayoutPool.sol: liquidity management, PAYOUT_ROLE access control
+- MockV3Aggregator.sol: for local testing with `updateAnswerAndTimestamp`
+- **23 Foundry tests**: all settlement edge cases, fuzz tests, batch settle, pause/unpause
+- Deploy scripts: base-sepolia, base mainnet (in scripts/deploy.ts)
+- TypeChain bindings generated (62 typings via `yarn typechain:gen`)
+
+### Fixed
+- Missing `@nomicfoundation/hardhat-ethers` devDependency
+- Stale feed test needed `vm.warp` before `updateAnswerAndTimestamp` to avoid arithmetic underflow
+- batchSettle uses `try this.settleOrder()` external call pattern for per-order failure isolation
 
 ### Decisions
 - multiplierBps in basis points (500 = 5x) for integer math on-chain
-- settleOrder is permissionless (anyone can call) → trustless settlement
+- settleOrder is permissionless (anyone can call) → trustless settlement, no single point of failure
+- batchSettle swallows individual settle failures so one bad order doesn't block the batch
 
 ---
 

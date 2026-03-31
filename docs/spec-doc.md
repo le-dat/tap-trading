@@ -1,5 +1,7 @@
 # Tap Trading — Project Specification
 
+> [ [CLAUDE.md](../CLAUDE.md) ] [ [Spec](spec-doc.md) ] [ [Architecture](architecture.md) ] [ [Plan](project-plan.md) ] [ [Status](project-status.md) ] [ [Changelog](changelog.md) ]
+
 > Phase 1 document. Complete this before writing any code.
 > Claude reads this file to understand what to build.
 
@@ -17,7 +19,10 @@ Build a mobile-first gamified trading platform where users predict whether a mar
 
 ## Milestone 1 — MVP (Weeks 1–8)
 
+See detailed [Project Plan](project-plan.md) for implementation steps.
+
 ### Must have
+
 - [ ] 1 asset: BTC/USD via Chainlink on BASE Sepolia
 - [ ] 3 durations: 1 minute, 5 minutes, 15 minutes
 - [ ] Fixed multiplier tiers: 2x / 5x / 10x (tied to target distance)
@@ -31,6 +36,7 @@ Build a mobile-first gamified trading platform where users predict whether a mar
 - [ ] Trade history page
 
 ### Out of scope for Milestone 1
+
 - Multiple assets
 - Dynamic multiplier calculation
 - Early close / cashout
@@ -89,45 +95,48 @@ Build a mobile-first gamified trading platform where users predict whether a mar
 
 For Milestone 1, use fixed tiers. Dynamic pricing in Milestone 2.
 
-| Target Distance | Multiplier Offered | Fair Multiplier* | House Edge |
-|---|---|---|---|
-| ±0.5% | 2x | 2.5x | ~20% |
-| ±1.0% | 5x | 5.8x | ~14% |
-| ±2.0% | 10x | 12x | ~17% |
+| Target Distance | Multiplier Offered | Fair Multiplier\* | House Edge |
+| --------------- | ------------------ | ----------------- | ---------- |
+| ±0.5%           | 2x                 | 2.5x              | ~20%       |
+| ±1.0%           | 5x                 | 5.8x              | ~14%       |
+| ±2.0%           | 10x                | 12x               | ~17%       |
 
-*Fair multiplier estimated from BTC historical 15-min volatility.
+\*Fair multiplier estimated from BTC historical 15-min volatility.
 House edge covers losses when multiple users win simultaneously.
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Smart contracts | Solidity 0.8.20, Hardhat, TypeChain |
-| Oracle | Chainlink AggregatorV3 on BASE |
-| Chain | BASE (Sepolia testnet → Mainnet) |
-| Backend API | NestJS, TypeScript |
-| Background worker | NestJS standalone app |
-| Database | PostgreSQL + TypeORM |
-| Cache | Redis |
-| Event bus | Kafka |
-| File storage | MinIO |
-| Auth | Privy (embedded wallet) |
-| Realtime | Socket.io |
-| Frontend | Next.js 14 (App Router), Tailwind CSS |
-| State | Zustand |
-| Animations | Framer Motion |
-| Web3 hooks | Wagmi + Viem |
-| Container | Docker + Docker Compose |
-| CI/CD | GitHub Actions |
-| Hosting | VPS (backend) + Vercel (frontend) |
+See [Architecture Document](architecture.md) for system design and data flow.
+
+| Layer             | Technology                            |
+| ----------------- | ------------------------------------- |
+| Smart contracts   | Solidity 0.8.20, Hardhat, TypeChain   |
+| Oracle            | Chainlink AggregatorV3 on BASE        |
+| Chain             | BASE (Sepolia testnet → Mainnet)      |
+| Backend API       | NestJS, TypeScript                    |
+| Background worker | NestJS standalone app                 |
+| Database          | PostgreSQL + TypeORM                  |
+| Cache             | Redis                                 |
+| Event bus         | Kafka                                 |
+| File storage      | MinIO                                 |
+| Auth              | Privy (embedded wallet)               |
+| Realtime          | Socket.io                             |
+| Frontend          | Next.js 14 (App Router), Tailwind CSS |
+| State             | Zustand                               |
+| Animations        | Framer Motion                         |
+| Web3 hooks        | Wagmi + Viem                          |
+| Container         | Docker + Docker Compose               |
+| CI/CD             | GitHub Actions                        |
+| Hosting           | VPS (backend) + Vercel (frontend)     |
 
 ---
 
 ## Acceptance Criteria — Definition of Done
 
 A feature is "done" when:
+
 1. Unit tests pass (Vitest)
 2. Integration test covers the happy path
 3. No TypeScript errors (`yarn type-check`)
@@ -137,6 +146,7 @@ A feature is "done" when:
 7. For contract changes: tests pass + TypeChain regenerated
 
 Settlement specifically is "done" when:
+
 - Price touch at exact target price settles correctly (edge case)
 - Price crossing target (gap) settles correctly
 - Expiry with no touch marks LOST correctly
