@@ -40,7 +40,7 @@ Claude will update "Last session" and "Next session" sections below.
 - Created `docker.env` + `docker.env.example` credential templates (gitignored)
 - Replaced generic `.env.example` with Tap Trading-specific vars aligned to Docker ports
 - Created root `package.json` for monorepo workspaces
-- Created `apps/backend/` NestJS scaffold: `main.ts`, `app.module.ts`, `data-source.ts`, `Order` entity
+- Created `be/` NestJS scaffold: `main.ts`, `app.module.ts`, `data-source.ts`, `Order` entity
 - Updated `.gitignore` to exclude `docker.env` and Docker volume dirs
 
 ---
@@ -67,8 +67,8 @@ Finish Phase 2: Infrastructure.
 ```
 
 **Files to touch next:**
-- `apps/backend/src/entities/` (add User, Settlement, Payment entities)
-- `apps/backend/src/modules/` (scaffold NestJS modules)
+- `be/src/entities/` (add User, Settlement, Payment entities)
+- `be/src/modules/` (scaffold NestJS modules)
 - `docker-compose.yml` — Kafka healthcheck fix (nc command may not be available in container)
 
 ---
@@ -77,7 +77,7 @@ Finish Phase 2: Infrastructure.
 
 | Feature | Status | Notes |
 |---|---|---|
-| Monorepo scaffold | ✅ done | yarn workspaces, apps/contracts/backend/frontend exist |
+| Monorepo scaffold | ✅ done | yarn workspaces, smc/be/fe exist |
 | TapOrder.sol | ✅ done | createOrder, settleOrder, batchSettle, pause/unpause, nonReentrant, stake limits |
 | PriceFeedAdapter.sol | ✅ done | 60s stale threshold, Chainlink wrapper, Ownable |
 | PayoutPool.sol | ✅ done | PAYOUT_ROLE access control, ReentrancyGuard, pause coordination |

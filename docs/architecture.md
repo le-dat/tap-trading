@@ -256,7 +256,7 @@ payments (
 ## Environment Variables Reference
 
 ```bash
-# apps/backend/.env
+# be/.env
 NODE_ENV=development
 PORT=3001
 WORKER_PORT=3002
@@ -288,7 +288,7 @@ PRIVY_APP_SECRET=your-privy-secret
 FEED_BTC_USD=0x0FB99723Aee6f420beAD13e6bBB79b7E6F034298
 FEED_ETH_USD=0x4aDC67696bA383F43DD60A9e78F2C97Fbbfc7cb1
 
-# apps/frontend/.env.local
+# fe/.env.local
 NEXT_PUBLIC_API_URL=http://localhost:3001
 NEXT_PUBLIC_WS_URL=http://localhost:3001
 NEXT_PUBLIC_PRIVY_APP_ID=your-privy-app-id

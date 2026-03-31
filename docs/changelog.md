@@ -25,8 +25,8 @@ Claude will add an entry to this file with: what was built, key decisions made, 
 - `docker.env` / `docker.env.example`: credential templates (gitignored)
 - `.env.example`: replaced generic template with full Tap Trading vars (Postgres :5434, Redis :6380, Kafka :29093)
 - `.gitignore`: added `docker.env`, `postgres_data/`, `redis_data/`, `minio_data/`
-- Root `package.json`: monorepo workspaces (`apps/contracts`, `apps/backend`, `apps/frontend`)
-- `apps/backend/`: NestJS scaffold — `main.ts`, `app.module.ts`, `data-source.ts`, `Order` entity
+- Root `package.json`: monorepo workspaces (`smc`, `be`, `fe`)
+- `be/`: NestJS scaffold — `main.ts`, `app.module.ts`, `data-source.ts`, `Order` entity
 
 ### Phase 1 — Contract Hardening
 - `PayoutPool.sol`: added `ReentrancyGuard` + `nonReentrant` on `withdraw()`

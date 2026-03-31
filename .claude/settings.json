@@ -75,8 +75,8 @@
       "Write(.env)",
       "Write(.env.local)",
       "Write(.env.production*)",
-      "Write(apps/contracts/typechain-types/**)",
-      "Write(apps/backend/src/adapters/typechain/**)"
+      "Write(smc/typechain-types/**)",
+      "Write(be/src/adapters/typechain/**)"
     ]
   },
   "mcpServers": {
