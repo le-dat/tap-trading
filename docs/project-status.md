@@ -24,47 +24,52 @@ Claude will update "Last session" and "Next session" sections below.
 
 ## Current Phase
 
-**Phase:** 1 — Contracts (✅ COMPLETE)
-**Week:** 2
-**Overall progress:** 20% (See [Detailed Plan](project-plan.md) for steps)
+**Phase:** 2 — Infrastructure (🔄 IN PROGRESS)
+**Week:** 3
+**Overall progress:** 25% (See [Detailed Plan](project-plan.md) for steps)
 
 ---
 
 ## Last Session
 
-**Date:** 2026-03-31 (second session)
+**Date:** 2026-03-31 (third session)
 **Duration:** ~30 min
 **Completed:**
-- Phase 1 contract hardening: ReentrancyGuard on PayoutPool.withdraw(), Ownable + onlyOwner on PriceFeedAdapter.setFeed(), MIN_STAKE/MAX_STAKE guards in TapOrder (0.001–0.1 ETH)
-- TapOrder.pause()/unpause() now coordinate with PayoutPool.pause()/unpause()
-- deploy.ts updated to grant TapOrder DEFAULT_ADMIN_ROLE on PayoutPool (needed for pause coordination)
-- 57 Foundry tests passing (34 from TapOrderSecurityTest + 23 from TapOrderTest), `forge build` clean, Hardhat compile + TypeChain ✅
-- Phase 1 fully complete with security hardening pass
+- Created `docker-compose.yml` with Postgres (:5434), Redis (:6380), Kafka (:29093), Zookeeper, MinIO — all running and healthy
+- Created `Makefile` with 25 targets (`make infra-up`, `make dev`, `make contracts-test`, `make backend`, etc.)
+- Created `docker.env` + `docker.env.example` credential templates (gitignored)
+- Replaced generic `.env.example` with Tap Trading-specific vars aligned to Docker ports
+- Created root `package.json` for monorepo workspaces
+- Created `apps/backend/` NestJS scaffold: `main.ts`, `app.module.ts`, `data-source.ts`, `Order` entity
+- Updated `.gitignore` to exclude `docker.env` and Docker volume dirs
 
 ---
 
 ## Next Session — Start Here
 
-**Goal:** Phase 2 Infrastructure — Docker Compose + TypeORM migrations
+**Goal:** Finish Phase 2 Infrastructure — complete Docker setup + run migrations
 
-**Plan:** [project-plan.md](project-plan.md) — Phase 1 ✅ complete, Phase 2 next
+**Plan:** [project-plan.md](project-plan.md) — Phase 2 🔄 in progress
 
 **First command to run:**
-```
-/dev-setup
+```bash
+make infra-up   # Docker already running — verify with: make docker-status
 ```
 
 **Exact prompt to give Claude:**
 ```
-Read docs/project-plan.md and CLAUDE.md.
-Start Phase 2: Infrastructure.
-Run /dev-setup to set up Docker Compose for Postgres, Redis, Kafka, MinIO.
-Then create TypeORM migrations for users, orders, settlements, payments tables.
+Finish Phase 2: Infrastructure.
+1. Run `make infra-up` to verify all 5 Docker services are healthy
+2. Run `yarn install` in monorepo root
+3. Create remaining TypeORM entities (User, Settlement, Payment)
+4. Run `make db-migrate-up` to apply migrations
+5. Then scaffold the NestJS modules: auth, order, price, settlement, socket
 ```
 
 **Files to touch next:**
-- `docker-compose.yml` (create in root)
-- `apps/backend/src/migrations/`
+- `apps/backend/src/entities/` (add User, Settlement, Payment entities)
+- `apps/backend/src/modules/` (scaffold NestJS modules)
+- `docker-compose.yml` — Kafka healthcheck fix (nc command may not be available in container)
 
 ---
 
@@ -79,7 +84,9 @@ Then create TypeORM migrations for users, orders, settlements, payments tables.
 | Contract tests | ✅ done | 57 Foundry tests passing (23 + 34 security tests) |
 | TypeChain bindings | ✅ done | 62 typings via `yarn typechain:gen` |
 | deploy.ts | ✅ done | Updated with DEFAULT_ADMIN_ROLE grant for pause coordination |
-| Docker Compose infra | ⬜ not started | Phase 2 |
+| Docker Compose infra | 🔄 done | Postgres :5434, Redis :6380, Kafka :29093, MinIO :9002/:9003 — all healthy |
+| Makefile | ✅ done | 25 targets covering infra, contracts, backend, deploy |
+| NestJS backend scaffold | 🔄 in progress | `main.ts`, `app.module.ts`, `data-source.ts`, `Order` entity exist |
 | TypeORM migrations | ⬜ not started | Phase 2 |
 | BASE Sepolia deploy | ⬜ not started | Phase 5 |
 | Backend: auth | ⬜ not started | Phase 3 |

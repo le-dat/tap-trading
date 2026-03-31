@@ -29,7 +29,7 @@ Target: [Milestone 1 — MVP](spec-doc.md#milestone-1--mvp-weeks-18) (~8 weeks)
 ---
 
 ## Phase 1 — Smart Contracts (~5 days, ✅ COMPLETE)
-> Status: All 23 tests passing. TypeChain bindings generated. Ready for BASE Sepolia deploy.
+> Status: All 57 tests passing. TypeChain bindings generated. Ready for BASE Sepolia deploy.
 
 ### Step 3: Complete TapOrder.sol Foundry tests
 - Command: /smart-contract-dev
@@ -56,6 +56,7 @@ Target: [Milestone 1 — MVP](spec-doc.md#milestone-1--mvp-weeks-18) (~8 weeks)
 - Run: `docker compose up -d` (after writing docker-compose.yml)
 - Done when: `docker compose ps` shows Postgres ✅, Redis ✅, Kafka ✅, MinIO ✅
 - Dependency: None
+- Note: Ports mapped non-standard (5434, 6380, 29093, 2182, 9002/9003) to avoid conflicts with existing containers
 
 ### Step 7: Create TypeORM migrations for core entities
 - Run: `cd apps/backend && yarn migration:generate src/migrations/InitialSchema`
@@ -180,7 +181,7 @@ Repeat for each module in order:
   [x] Step 5b: Contract hardening — ReentrancyGuard, Ownable, stake limits, PayoutPool pause coordination (57 tests passing)
 
 [ ] Phase 2: Infrastructure (~3 days)
-  [ ] Step 6: Docker Compose setup
+  [x] Step 6: Docker Compose setup ✅ — 5 services (Postgres, Redis, Kafka, Zookeeper, MinIO) running
   [ ] Step 7: TypeORM migrations
 
 [ ] Phase 3: Backend (~14 days)

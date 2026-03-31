@@ -2,7 +2,7 @@
 
 > [ [CLAUDE.md](../CLAUDE.md) ] [ [Spec](spec-doc.md) ] [ [Architecture](architecture.md) ] [ [Plan](project-plan.md) ] [ [Status](project-status.md) ] [ [Changelog](changelog.md) ]
 
-> Updated automatically by `/update-docs` command after each completed feature.
+> Updated automatically by `/checkpoint` command after each completed feature.
 > Format: [version or date] — what changed — who / which session.
 
 ---
@@ -19,22 +19,22 @@ Claude will add an entry to this file with: what was built, key decisions made, 
 
 ## Unreleased — In Progress
 
-### Added
-- Project scaffolded from claude-starter template
-- CLAUDE.md populated with full Tap Trading domain context
-- docs/ folder initialized with spec-doc, architecture, changelog, project-status
-- project-plan.md generated (22 steps, 6 phases, ~8 weeks to Milestone 1)
+### Phase 2 — Infrastructure
+- `docker-compose.yml`: Postgres (:5434), Redis (:6380), Kafka (:29093), Zookeeper (:2182), MinIO (:9002/:9003) — all healthy
+- `Makefile`: 25 targets — `make infra-up`, `make dev`, `make contracts-test`, `make backend`, etc.
+- `docker.env` / `docker.env.example`: credential templates (gitignored)
+- `.env.example`: replaced generic template with full Tap Trading vars (Postgres :5434, Redis :6380, Kafka :29093)
+- `.gitignore`: added `docker.env`, `postgres_data/`, `redis_data/`, `minio_data/`
+- Root `package.json`: monorepo workspaces (`apps/contracts`, `apps/backend`, `apps/frontend`)
+- `apps/backend/`: NestJS scaffold — `main.ts`, `app.module.ts`, `data-source.ts`, `Order` entity
+
+### Phase 1 — Contract Hardening
 - `PayoutPool.sol`: added `ReentrancyGuard` + `nonReentrant` on `withdraw()`
 - `PriceFeedAdapter.sol`: added `Ownable` + `onlyOwner` on `setFeed()`
 - `TapOrder.sol`: added `MIN_STAKE` (0.001 ETH) / `MAX_STAKE` (0.1 ETH) stake guards
-- `TapOrder.sol`: `pause()`/`unpause()` now coordinate with `PayoutPool.pause()`/`unpause()`
+- `TapOrder.sol`: `pause()`/`unpause()` now coordinate with `PayoutPool`
 - `scripts/deploy.ts`: grants `DEFAULT_ADMIN_ROLE` to TapOrder for PayoutPool pause coordination
-
-### Fixed
-- `@nomicfoundation/hardhat-toolbox` missing dep → replaced with `@nomicfoundation/hardhat-ethers` to avoid Hardhat 3 migration chain
-- Stale feed test arithmetic underflow (timestamp warp needed before updating mock)
-- Missing `batchSettle` external call via `try this.settleOrder()` for partial failure isolation
-- `deploy.ts`: missing `DEFAULT_ADMIN_ROLE` grant to TapOrder (needed for PayoutPool pause coordination)
+- 57 Foundry tests passing (Phase 1 complete)
 
 ---
 

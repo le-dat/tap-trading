@@ -1,0 +1,20 @@
+{
+  "name": "tap-trading",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/contracts",
+    "apps/backend",
+    "apps/frontend",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "yarn workspace @tap/backend dev",
+    "dev:worker": "yarn workspace @tap/backend dev:worker",
+    "frontend": "yarn workspace @tap/frontend dev",
+    "contracts:build": "yarn workspace @tap/contracts foundry:build",
+    "contracts:test": "yarn workspace @tap/contracts foundry:test",
+    "contracts:compile": "yarn workspace @tap/contracts compile",
+    "typechain": "yarn workspace @tap/contracts typechain:gen"
+  }
+}
