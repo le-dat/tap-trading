@@ -371,6 +371,32 @@ contract TapOrderTest is Test {
     }
 
     // -----------------------------------------------------------------------
+    // Unit Tests: settleOrder - Permissionless
+    // -----------------------------------------------------------------------
+    function test_settleOrder_isPermissionless() public {
+        uint256 orderId = _createOrder(user, 66000 * 10**8, true, DURATION_1M, MULTIPLIER_5X, 0.01 ether);
+
+        _updateBtcPrice(66000 * 10**8);
+
+        // 'other' is not the owner — settleOrder should still succeed (permissionless)
+        vm.prank(other);
+        tapOrder.settleOrder(orderId);
+
+        (
+            ,
+            ,
+            ,
+            ,
+            ,
+            ,
+            ,
+            TapOrder.OrderStatus status
+        ) = tapOrder.orders(orderId);
+
+        assertEq(uint8(status), uint8(TapOrder.OrderStatus.WON));
+    }
+
+    // -----------------------------------------------------------------------
     // Unit Tests: settleOrder - Edge cases / Idempotency
     // -----------------------------------------------------------------------
     function test_settleOrder_revertsWhenCalledTwice() public {
@@ -381,6 +407,20 @@ contract TapOrderTest is Test {
 
         // Second call reverts with OrderNotOpen because status check comes before settled[] check
         vm.expectRevert(abi.encodeWithSelector(TapOrder.OrderNotOpen.selector, orderId, 1));
+        tapOrder.settleOrder(orderId);
+    }
+
+    function test_settleOrder_revertsWhenFeedIsStale() public {
+        uint256 orderId = _createOrder(user, 66000 * 10**8, true, DURATION_1M, MULTIPLIER_5X, 0.01 ether);
+
+        // Warp 61 seconds into the future so the feed is definitely stale when settled
+        vm.warp(block.timestamp + 61 seconds);
+
+        // Set price to a value that would be a WIN, but with a stale timestamp (current - 61s)
+        btcFeed.updateAnswerAndTimestamp(66000 * 10**8, block.timestamp - 61 seconds);
+
+        // Price feed is stale (>60s old) — settleOrder must revert
+        vm.expectRevert(abi.encodeWithSelector(TapOrder.StalePriceFeed.selector, BTC_ASSET));
         tapOrder.settleOrder(orderId);
     }
 
